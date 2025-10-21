@@ -1,0 +1,9 @@
+export { default as HeroSection } from "./HeroSection";
+export { default as StepsSection } from "./StepsSection";
+export { default as AccuracySection } from "./AccuracySection";
+export { default as DownloadAppSection } from "./DownloadAppSection";
+export { default as TestimonialsSection } from "./TestimonialsSection";
+export { default as PartnersSection } from "./PartnersSection";
+export { default as WhyChooseUsSection } from "./WhyChooseUsSection";
+export { default as ProDocsSection } from "./ProDocsSection";
+export { default as FinalCTASection } from "./FinalCTASection";
