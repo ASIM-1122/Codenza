@@ -13,7 +13,7 @@ const WhyChooseUsSection = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto px-4">
       {features.map((f, i) => (
         <div key={i} className="p-6 bg-white rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-3 text-orange-600">{f.title}</h3>
+          <h3 className="text-xl font-semibold mb-3 text-blue-700">{f.title}</h3>
           <p className="text-gray-600">{f.desc}</p>
         </div>
       ))}

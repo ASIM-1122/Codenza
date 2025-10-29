@@ -15,7 +15,7 @@ const AccuracySection = () => (
         a 99% accuracy rate with every RoofScope report, ensuring confidence and
         consistency in your estimates and material orders.
       </p>
-      <button className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-md font-semibold">
+      <button className="bg-blue-800 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-semibold">
         SEE OUR ACCURACY REPORT
       </button>
     </div>

@@ -9,12 +9,12 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between space-y-8 md:space-y-0">
         {/* Logo and Motto */}
         <div className="space-y-3 flex flex-col w-full md:w-1/4">
-          <span className="text-2xl font-semibold text-[#ff9300]">Prime<span className="text-white">Online Solutions</span></span>
+          <span className="text-2xl font-semibold text-blue-600">Prime<span className="text-white">Online Solutions</span></span>
           <span className="text-sm text-gray-300">Better Data, Bigger Profits™</span>
-          <div className="flex space-x-2 mt-3">
+          {/* <div className="flex space-x-2 mt-3">
             <a href="#"><img src={Appstoree} alt="App Store" className="h-10 w-28 rounded-md" /></a>
             <a href="#"><img src={Playstoree} alt="Google Play" className="h-10 w-28 rounded-md" /></a>
-          </div>
+          </div> */}
         </div>
         
         {/* Links */}
@@ -67,7 +67,7 @@ export default function Footer() {
       </div>
       {/* Copyright */}
       <div className="text-xs text-gray-400 text-center mt-6 border-t border-gray-700 pt-4 tracking-wider">
-        Copyrights © 2025 Scope Technologies.<br />All Rights Reserved.
+        Copyrights © 2025 Online prime Sollutions.<br />All Rights Reserved.
       </div>
     </footer>
   );

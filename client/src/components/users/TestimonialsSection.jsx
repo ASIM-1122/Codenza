@@ -4,12 +4,12 @@ const testimonials = [
   {
     name: "Dalton Smith / Frank Guillens",
     company: "Western Roofing Installations",
-    text: "RoofScope reports have been a game changer for us! Their accuracy and speed give us confidence in every project.",
+    text: "Online Prime Sollutions reports have been a game changer for us! Their accuracy and speed give us confidence in every project.",
   },
   {
     name: "N. Higgs",
     company: "Higgs Installations Services, LLC",
-    text: "Scope Technologies has streamlined our workflow and made our estimates 100% more efficient.",
+    text: "Online Prime Sollutions has streamlined our workflow and made our estimates 100% more efficient.",
   },
   // add more testimonials here — component will adapt
 ];
@@ -76,7 +76,7 @@ export default function TestimonialsSection() {
             onClick={() => scrollByOffset(-1)}
             disabled={!canScrollLeft}
             aria-label="Scroll left"
-            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 rounded-full p-2 shadow-md focus:outline-none focus:ring-2 focus:ring-orange-300 transition-opacity
+            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 rounded-full p-2 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300 transition-opacity
               ${canScrollLeft ? "bg-white text-gray-800 hover:scale-105" : "bg-white/40 text-gray-400 cursor-not-allowed opacity-50"}
               hidden md:inline-flex`}
           >
@@ -112,7 +112,7 @@ export default function TestimonialsSection() {
             onClick={() => scrollByOffset(1)}
             disabled={!canScrollRight}
             aria-label="Scroll right"
-            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 rounded-full p-2 shadow-md focus:outline-none focus:ring-2 focus:ring-orange-300 transition-opacity
+            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 rounded-full p-2 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300 transition-opacity
               ${canScrollRight ? "bg-white text-gray-800 hover:scale-105" : "bg-white/40 text-gray-400 cursor-not-allowed opacity-50"}
               hidden md:inline-flex`}
           >

@@ -25,7 +25,7 @@ const StepsSection = () => (
       {steps.map((step, idx) => (
         <div
           key={idx}
-          className="bg-white rounded-lg shadow-md p-8 border-t-4 border-orange-600"
+          className="bg-white rounded-lg shadow-md p-8 border-t-4 border-blue-600"
         >
           <h3 className="text-2xl font-semibold mb-3 text-gray-800">{step.title}</h3>
           <p className="text-gray-600">{step.desc}</p>
@@ -33,7 +33,7 @@ const StepsSection = () => (
       ))}
     </div>
 
-    <button className="mt-10 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-md font-semibold">
+    <button className="mt-10 bg-blue-800 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-semibold">
       WATCH VIDEO
     </button>
   </section>

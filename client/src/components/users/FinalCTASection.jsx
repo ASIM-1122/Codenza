@@ -5,7 +5,7 @@ const FinalCTASection = () => (
     <h2 className="text-3xl md:text-4xl font-bold mb-6">
       Are You a Contractor Looking To Grow Your Business?
     </h2>
-    <button className="bg-orange-600 hover:bg-orange-700 px-8 py-3 rounded-md font-semibold">
+    <button className="bg-blue-700 hover:bg-blue-800 px-8 py-3 rounded-md font-semibold">
       WATCH FREE DEMO
     </button>
   </section>
