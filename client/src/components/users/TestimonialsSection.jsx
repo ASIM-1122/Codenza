@@ -116,7 +116,7 @@ export default function TestimonialsSection() {
               ${canScrollRight ? "bg-white text-gray-800 hover:scale-105" : "bg-white/40 text-gray-400 cursor-not-allowed opacity-50"}
               hidden md:inline-flex`}
           >
-            {/* right arrow svg */}
+            {/* right arroww svg */}
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path d="M9 6l6 6-6 6" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
