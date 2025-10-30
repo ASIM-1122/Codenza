@@ -1,150 +1,204 @@
+// src/pages/AuthPage.jsx
 import React, { useState } from "react";
-import Navbar from "../../components/common/Navbar.jsx";
+import Navbar from "../../components/common/Navbar";
 
 /**
- * AuthPage.jsx
- * Responsive login/signup form (React + Tailwind CSS)
- * Works from mobile (360px) → 2400px screens
- * - Clean, minimal, and professional
- * - Single component toggles between Login & Signup
+ * AuthPage
+ * - Responsive login / signup form
+ * - Theme: slate + teal
+ * - Controlled inputs, simple client-side UI (no backend/auth wired)
  */
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    remember: false,
+  });
+  const [loading, setLoading] = useState(false);
+  const update = (k) => (e) =>
+    setForm((s) => ({ ...s, [k]: e.target.type === "checkbox" ? e.target.checked : e.target.value }));
+
+  const submit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    // Temporary client-side simulate
+    setTimeout(() => {
+      setLoading(false);
+      alert(`${isLogin ? "Logged in" : "Account created"} (demo) — wire real auth here.`);
+      // reset sensitive fields on signup success (demo)
+      setForm((s) => ({ ...s, password: "", confirmPassword: "" }));
+    }, 800);
+  };
 
   return (
     <>
-    <Navbar/>
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-white to-orange-100 px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300">
-        {/* Header */}
-        <div className="bg-blue-900 text-white text-center py-6">
-          <h2 className="text-2xl font-bold tracking-wide">
-            {isLogin ? "Welcome Back!" : "Create Account"}
-          </h2>
-          <p className="text-sm mt-1 opacity-90">
-            {isLogin ? "Login to continue" : "Join us and get started"}
-          </p>
-        </div>
-
-        {/* Form */}
-        <div className="p-8">
-          <form className="space-y-5">
-            {!isLogin && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="John Doe"
-                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
-                />
-              </div>
-            )}
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
-              </label>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                placeholder="********"
-                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
-              />
-            </div>
-
-            {/* {!isLogin && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  placeholder="********"
-                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
-                />
-              </div>
-            )} */}
-
-            {isLogin && (
-              <div className="flex items-center justify-between text-sm">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="accent-orange-600" />
-                  Remember me
-                </label>
-                <a href="#" className="text-orange-600 hover:underline">
-                  Forgot Password?
-                </a>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="w-full py-3 bg-blue-900 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition-all duration-300"
-            >
-              {isLogin ? "Login" : "Sign Up"}
-            </button>
-          </form>
-
-          {/* Divider */}
-          <div className="mt-6 flex items-center">
-            <div className="flex-grow border-t border-gray-300"></div>
-            <span className="mx-3 text-gray-500 text-sm">OR</span>
-            <div className="flex-grow border-t border-gray-300"></div>
+      <Navbar />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-slate-100 to-slate-50 px-4 py-12">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300">
+          {/* Header */}
+          <div className="bg-slate-900 text-white text-center py-6">
+            <h2 className="text-2xl font-bold tracking-tight">
+              {isLogin ? "Welcome Back" : "Create your account"}
+            </h2>
+            <p className="text-sm mt-1 text-slate-300">
+              {isLogin ? "Sign in to continue" : "Join and start using PrimeOnline Solutions"}
+            </p>
           </div>
 
-          {/* Google login (optional) */}
-          <button className="w-full mt-6 flex items-center justify-center gap-2 border py-2 rounded-lg hover:bg-gray-50 transition">
-            <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
-              alt="Google"
-              className="h-5 w-5"
-            />
-            <span className="text-sm font-medium text-gray-700">
-              Continue with Google
-            </span>
-          </button>
+          {/* Body */}
+          <div className="p-8">
+            <form onSubmit={submit} className="space-y-5" aria-label={isLogin ? "Login form" : "Signup form"}>
+              {/* name (signup only) */}
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="name">
+                    Full name
+                  </label>
+                  <input
+                    id="name"
+                    value={form.name}
+                    onChange={update("name")}
+                    placeholder="John Doe"
+                    className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-300"
+                  />
+                </div>
+              )}
 
-          {/* Toggle */}
-          <div className="text-center mt-6 text-sm">
-            {isLogin ? (
-              <p>
-                Don’t have an account?{" "}
+              {/* email */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="email">
+                  Email address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={form.email}
+                  onChange={update("email")}
+                  placeholder="you@example.com"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-300"
+                  required
+                />
+              </div>
+
+              {/* password */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="password">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  value={form.password}
+                  onChange={update("password")}
+                  placeholder="••••••••"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-300"
+                  required
+                />
+              </div>
+
+              {/* confirm password (signup) */}
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="confirmPassword">
+                    Confirm password
+                  </label>
+                  <input
+                    id="confirmPassword"
+                    type="password"
+                    value={form.confirmPassword}
+                    onChange={update("confirmPassword")}
+                    placeholder="••••••••"
+                    className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-300"
+                    required
+                  />
+                </div>
+              )}
+
+              {/* remember / forgot (login only) */}
+              {isLogin && (
+                <div className="flex items-center justify-between text-sm">
+                  <label className="flex items-center gap-2 text-slate-700">
+                    <input
+                      type="checkbox"
+                      checked={form.remember}
+                      onChange={update("remember")}
+                      className="h-4 w-4 rounded accent-teal-600"
+                    />
+                    Remember me
+                  </label>
+
+                  <button type="button" className="text-teal-600 hover:underline text-sm">
+                    Forgot password?
+                  </button>
+                </div>
+              )}
+
+              {/* submit */}
+              <div>
                 <button
-                  type="button"
-                  className="text-blue-900 hover:underline font-medium"
-                  onClick={() => setIsLogin(false)}
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3 rounded-lg font-semibold bg-teal-600 hover:bg-teal-700 text-white shadow-md focus:outline-none focus:ring-4 focus:ring-teal-200 disabled:opacity-70"
                 >
-                  Sign Up
+                  {loading ? (isLogin ? "Signing in..." : "Creating...") : isLogin ? "Login" : "Create account"}
                 </button>
-              </p>
-            ) : (
-              <p>
-                Already have an account?{" "}
-                <button
-                  type="button"
-                  className="text-orange-600 hover:underline font-medium"
-                  onClick={() => setIsLogin(true)}
-                >
-                  Login
-                </button>
-              </p>
-            )}
+              </div>
+
+              {/* divider */}
+              <div className="flex items-center gap-3">
+                <div className="flex-1 h-px bg-slate-200" />
+                <div className="text-xs text-slate-400">OR</div>
+                <div className="flex-1 h-px bg-slate-200" />
+              </div>
+
+              {/* social / google */}
+              <button
+                type="button"
+                className="w-full mt-1 flex items-center justify-center gap-3 border border-slate-200 py-2 rounded-lg hover:bg-slate-50 transition"
+              >
+                <img
+                  src="https://www.svgrepo.com/show/475656/google-color.svg"
+                  alt="Google"
+                  className="h-5 w-5"
+                />
+                <span className="text-sm text-slate-700 font-medium">Continue with Google</span>
+              </button>
+
+              {/* toggle */}
+              <div className="text-center mt-3 text-sm">
+                {isLogin ? (
+                  <p className="text-slate-600">
+                    Don’t have an account?{" "}
+                    <button
+                      type="button"
+                      onClick={() => setIsLogin(false)}
+                      className="text-teal-600 font-medium hover:underline"
+                    >
+                      Sign up
+                    </button>
+                  </p>
+                ) : (
+                  <p className="text-slate-600">
+                    Already have an account?{" "}
+                    <button
+                      type="button"
+                      onClick={() => setIsLogin(true)}
+                      className="text-teal-600 font-medium hover:underline"
+                    >
+                      Login
+                    </button>
+                  </p>
+                )}
+              </div>
+            </form>
           </div>
         </div>
       </div>
-    </div></>
+    </>
   );
 }
