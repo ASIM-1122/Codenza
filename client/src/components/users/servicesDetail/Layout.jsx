@@ -1,21 +1,35 @@
 // src/components/Layout.jsx
 import React from "react";
 import Navbar from "../../../components/common/Navbar";
+import Footer from "../../../components/common/Footer"; // ✅ use your final footer
+
+/**
+ * Layout Component
+ * ----------------
+ * Wraps each page with Navbar, Footer, and consistent background & typography.
+ * Designed to be responsive, clean, and production-ready.
+ */
 
 export default function Layout({ children }) {
   return (
-    <div className="min-h-screen flex flex-col bg-white text-gray-800">
-      {/* Simple header - keep consistent with your main site */}
+    <div className="min-h-screen flex flex-col bg-gray-50 text-gray-800 font-inter">
+      {/* Navbar */}
       <Navbar />
 
-      <main className="flex-1">{children}</main>
+      {/* Main Content */}
+      <main className="flex-1 w-full">{children}</main>
 
-      <footer className="bg-gray-900 text-gray-200 py-8">
-        <div className="max-w-[1200px] mx-auto px-4 text-center text-sm">
-          <div>© {new Date().getFullYear()} Scope Technologies — All rights reserved.</div>
-          <div className="mt-2 text-xs text-gray-400">Questions? <a href="/contact" className="underline">Contact us</a></div>
-        </div>
-      </footer>
+      {/* Footer */}
+      <Footer />
+
+      {/* Optional small bottom bar for legal text */}
+      <div className="bg-slate-900 text-gray-400 text-center text-xs py-3 border-t border-gray-800">
+        © {new Date().getFullYear()} PrimeOnline Solutions — All rights reserved.
+        <br />
+        <a href="/contact" className="text-teal-400 hover:underline">
+          Have questions? Contact us
+        </a>
+      </div>
     </div>
   );
 }

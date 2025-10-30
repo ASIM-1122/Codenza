@@ -4,10 +4,10 @@ import { PLANS } from "../../../utils/services";
 
 /**
  * PlansCompare
- * - Dynamically generates a feature matrix from PLANS (utils/services.js)
- * - Shows exact text when plans contain a specific feature string (helpful for values like "12HR" vs "24HR")
- * - Falls back to a checkmark if the feature key is present as a short token in the plan
- * - Responsive: horizontal scroll on small screens; sticky left column for readability
+ * - Data-driven feature matrix using PLANS (single source of truth)
+ * - Sticky left "FEATURES" column for horizontal comparison
+ * - Responsive: horizontal scroll on small screens
+ * - Theme: slate / teal / amber (matches project design system)
  */
 
 const DEFAULT_ORDER = [
@@ -31,12 +31,11 @@ function normalizeFeatureText(text) {
 }
 
 export default function PlansCompare() {
-  // Build a unique ordered list of features from PLANS.bullets
+  // Build ordered, deduped list of features from PLANS
   const features = useMemo(() => {
     const seen = new Set();
     const extracted = [];
 
-    // Helper to push if new
     const pushIfNew = (f) => {
       const key = normalizeFeatureText(f);
       if (!key) return;
@@ -46,16 +45,15 @@ export default function PlansCompare() {
       }
     };
 
-    // First, push ordered keywords that exist in any plan (keeps the most important rows at top)
+    // prioritize DEFAULT_ORDER rows if they appear in any plan
     for (const key of DEFAULT_ORDER) {
-      // check if any plan has a bullet containing this key (case-insensitive)
       const found = PLANS.some((p) =>
-        p.bullets?.some((b) => b.toLowerCase().includes(key.toLowerCase()))
+        Array.isArray(p.bullets) && p.bullets.some((b) => b.toLowerCase().includes(key.toLowerCase()))
       );
       if (found) pushIfNew(key);
     }
 
-    // Then add every bullet from plans (preserve order per plan, but dedupe globally)
+    // then add all bullets from each plan (preserve plan order, dedupe)
     for (const plan of PLANS) {
       if (!Array.isArray(plan.bullets)) continue;
       for (const b of plan.bullets) {
@@ -66,49 +64,52 @@ export default function PlansCompare() {
     return extracted;
   }, []);
 
-  // Helper: for a given plan and feature row, return:
-  // - exact string from plan (if plan contains feature string that matches),
-  // - a simple checkmark if plan includes the feature token (e.g., contains word),
-  // - otherwise falsey
+  // Determine what to show for each [plan, feature] intersection
   function cellFor(plan, feature) {
     const normalized = feature.toLowerCase();
 
-    // If plan contains the exact bullet (exact match)
+    // exact match
     const exact = plan.bullets?.find((b) => b.toLowerCase() === normalized);
     if (exact) return { text: exact };
 
-    // If plan has a bullet that includes the feature phrase (useful for "12HR" vs "24HR")
+    // contains phrase (e.g., "12HR" in "12HR Residential RoofScope")
     const includes = plan.bullets?.find((b) => b.toLowerCase().includes(normalized));
     if (includes) return { text: includes };
 
-    // Some features from DEFAULT_ORDER are generic keys: try to detect tokens
-    // e.g., feature = "Report Discount" -> plan might contain "5% Report Discount" or "7% Report Discount"
+    // special handling for "Report Discount" tokens
     if (feature.toLowerCase().includes("report discount")) {
       const f = plan.bullets?.find((b) => b.toLowerCase().includes("report discount"));
       if (f) return { text: f };
     }
 
-    // For short tokens like "Dedicated Account Manager", do exact-inclusion check
-    const hasToken = plan.bullets?.some((b) =>
-      b.toLowerCase().includes(feature.toLowerCase())
-    );
+    // token presence fallback
+    const hasToken = plan.bullets?.some((b) => b.toLowerCase().includes(feature.toLowerCase()));
     if (hasToken) return { present: true };
 
     return null;
   }
 
   return (
-    <section className="py-12">
-      <div className="max-w-[1200px] mx-auto px-4">
-        <div className="overflow-x-auto">
+    <section className="py-12 bg-slate-50">
+      {/* subtle amber glow for brand warmth */}
+      <div className="relative max-w-[1200px] mx-auto px-4">
+        <div className="overflow-x-auto rounded-lg shadow-md bg-white">
           <table className="min-w-[720px] w-full text-left border-collapse">
             <thead>
               <tr>
-                <th className="pb-4 pr-6 text-sm sticky left-0 bg-white z-10">FEATURES</th>
+                {/* sticky left column header */}
+                <th
+                  className="sticky left-0 z-20 bg-white px-6 py-4 text-sm font-medium text-slate-700"
+                  style={{ minWidth: 220 }}
+                >
+                  FEATURES
+                </th>
+
                 {PLANS.map((p) => (
-                  <th key={p.id} className="pb-4 text-center">
-                    <div className="text-sm font-semibold">{p.title}</div>
-                    <div className="text-2xl font-bold">${p.price}.00</div>
+                  <th key={p.id} className="px-6 py-4 text-center align-top bg-white">
+                    <div className="text-sm text-slate-600">{p.title}</div>
+                    <div className="mt-1 text-2xl font-extrabold text-slate-900">${p.price}.00</div>
+                    {p.badge && <div className="mt-2 inline-block text-xs px-2 py-1 rounded-full bg-teal-50 text-teal-600">{p.badge}</div>}
                   </th>
                 ))}
               </tr>
@@ -116,30 +117,29 @@ export default function PlansCompare() {
 
             <tbody>
               {features.map((f, idx) => (
-                <tr key={idx} className="border-t">
-                  {/* FEATURE NAME (sticky for readability on horizontal scroll) */}
+                <tr key={idx} className="border-t last:border-b">
+                  {/* Feature name - sticky so it's always visible on horizontal scroll */}
                   <td
-                    className="py-4 pr-6 text-sm align-top sticky left-0 bg-white z-10"
+                    className="sticky left-0 z-10 bg-white px-6 py-4 align-top text-sm text-slate-800"
                     style={{ minWidth: 220 }}
                   >
                     {f}
                   </td>
 
-                  {/* one cell per plan */}
                   {PLANS.map((p) => {
                     const cell = cellFor(p, f);
                     return (
-                      <td key={p.id} className="py-4 text-center align-top">
+                      <td key={p.id} className="px-6 py-4 text-center align-top">
                         {cell ? (
                           cell.text ? (
-                            <div className="text-sm text-gray-700 dark:text-gray-600">
-                              {cell.text}
-                            </div>
+                            <div className="text-sm text-slate-700">{cell.text}</div>
                           ) : cell.present ? (
-                            <span className="inline-block text-green-500 text-xl">✔</span>
+                            <span className="inline-block text-teal-600 text-lg" aria-hidden>
+                              ✓
+                            </span>
                           ) : null
                         ) : (
-                          <span className="text-gray-300">—</span>
+                          <span className="text-slate-300">—</span>
                         )}
                       </td>
                     );
@@ -150,9 +150,9 @@ export default function PlansCompare() {
           </table>
         </div>
 
-        {/* Helpful note and mobile guidance */}
-        <div className="mt-4 text-xs text-gray-500">
-          Tip: horizontally scroll on small screens. The feature column is fixed for easier comparison.
+        {/* helpful note */}
+        <div className="mt-4 text-xs text-slate-500">
+          Tip: horizontally scroll the table on small screens. The left column is fixed for easier comparison.
         </div>
       </div>
     </section>

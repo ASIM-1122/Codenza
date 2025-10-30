@@ -1,21 +1,46 @@
-// FeaturesRow.jsx
-import React from 'react';
+// src/components/FeaturesRow.jsx
+import React from "react";
+import { FaGlobeAmericas, FaBullseye, FaUserTie } from "react-icons/fa";
 
 const features = [
-  { title: '100% Nationwide Coverage', desc: 'We cover the US and Canada.' },
-  { title: '99% Accuracy', desc: 'Validated measurement accuracy.' },
-  { title: 'Dedicated Managers', desc: 'We assign a manager for your account.' },
+  {
+    title: "100% Nationwide Coverage",
+    desc: "We proudly serve across the US and Canada — ensuring accessibility wherever you operate.",
+    icon: <FaGlobeAmericas />,
+  },
+  {
+    title: "99% Accuracy",
+    desc: "Our advanced measurement automation delivers near-perfect precision you can trust.",
+    icon: <FaBullseye />,
+  },
+  {
+    title: "Dedicated Managers",
+    desc: "Get a personal account manager for seamless project communication and success.",
+    icon: <FaUserTie />,
+  },
 ];
 
-export default function FeaturesRow(){
+export default function FeaturesRow() {
   return (
-    <section className="py-12 bg-gray-50">
-      <div className="max-w-[1200px] mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-6">
-        {features.map((f,i)=>(
-          <div key={i} className="bg-white p-6 rounded-lg text-center shadow-sm">
-            <div className="text-blue-600 text-3xl mb-3">🏆</div>
-            <h4 className="font-semibold">{f.title}</h4>
-            <p className="text-sm text-gray-500 mt-2">{f.desc}</p>
+    <section className="py-20 bg-gradient-to-b from-slate-50 to-slate-100">
+      <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+        {features.map((f, i) => (
+          <div
+            key={i}
+            className="bg-white rounded-2xl p-8 shadow-md hover:shadow-lg transition-shadow duration-300"
+          >
+            {/* Icon */}
+            <div className="text-teal-600 text-4xl mb-4 flex justify-center">
+              {f.icon}
+            </div>
+
+            {/* Title */}
+            <h4 className="text-lg md:text-xl font-semibold text-slate-800 mb-2">
+              {f.title}
+            </h4>
+
+            {/* Description */}
+            <p className="text-sm text-slate-500 leading-relaxed">{f.desc}</p>
           </div>
         ))}
       </div>

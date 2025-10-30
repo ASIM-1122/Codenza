@@ -29,7 +29,7 @@ const StepsSection = () => (
           key={idx}
           className="bg-white rounded-xl shadow-lg p-8 hover:-translate-y-2 transition-transform duration-300 border border-gray-200"
         >
-          <div className="text-5xl font-extrabold text-blue-700 mb-4">
+          <div className="text-5xl font-extrabold text-teal-600 mb-4">
             {idx + 1}
           </div>
           <h3 className="text-2xl font-semibold mb-3 text-gray-800">
@@ -41,7 +41,7 @@ const StepsSection = () => (
     </div>
 
     {/* Call to Action */}
-    <button className="mt-12 bg-blue-700 hover:bg-blue-800 text-white px-8 py-3 rounded-lg font-semibold shadow-md transition-colors duration-300">
+    <button className="mt-12 bg-teal-600 hover:bg-teal-700 text-white px-8 py-3 rounded-lg font-semibold shadow-md transition-colors duration-300">
       WATCH VIDEO
     </button>
   </section>
