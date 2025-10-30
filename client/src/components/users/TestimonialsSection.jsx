@@ -1,32 +1,62 @@
-import React, { useEffect, useRef, useState } from "react";
+// src/components/TestimonialsSection.jsx
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import { motion } from "framer-motion";
+
+/**
+ * TestimonialsSection
+ * - Uses site palette: slate (text), teal (accent), amber (decor)
+ * - Responsive from mobile -> 2400px
+ * - Horizontal scroll + arrow controls + pager dots
+ * - Keyboard navigation & accessible labels
+ */
 
 const testimonials = [
   {
     name: "Dalton Smith / Frank Guillens",
     company: "Western Roofing Installations",
-    text: "Online Prime Sollutions reports have been a game changer for us! Their accuracy and speed give us confidence in every project.",
+    text: "Online PrimeSolutions reports have been a game changer for us! Their accuracy and speed give us confidence in every project.",
   },
   {
     name: "N. Higgs",
     company: "Higgs Installations Services, LLC",
-    text: "Online Prime Sollutions has streamlined our workflow and made our estimates 100% more efficient.",
+    text: "PrimeSolutions has streamlined our workflow and made our estimates 100% more efficient.",
   },
-  // add more testimonials here — component will adapt
+  {
+    name: "A. Johnson",
+    company: "Johnson Roofing Co.",
+    text: "Fast turnaround, excellent support and highly accurate measurements — highly recommended.",
+  },
 ];
 
 export default function TestimonialsSection() {
   const scrollerRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  // update arrow enabled state
-  const updateScrollState = () => {
+  // compute scroll state (left/right possibility) and active index
+  const updateScrollState = useCallback(() => {
     const el = scrollerRef.current;
     if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 0);
-    // Use small epsilon to avoid floating rounding issues
-    setCanScrollRight(el.scrollLeft + el.clientWidth + 1 < el.scrollWidth);
-  };
+    // buttons enablement
+    setCanScrollLeft(el.scrollLeft > 8);
+    setCanScrollRight(el.scrollLeft + el.clientWidth + 8 < el.scrollWidth);
+
+    // determine nearest child to center
+    const children = Array.from(el.children);
+    const viewportCenter = el.scrollLeft + el.clientWidth / 2;
+    let nearest = 0;
+    let nearestDist = Infinity;
+    children.forEach((child, idx) => {
+      const childCenter = child.offsetLeft + child.clientWidth / 2;
+      const dist = Math.abs(childCenter - viewportCenter);
+      if (dist < nearestDist) {
+        nearestDist = dist;
+        nearest = idx;
+      }
+    });
+    setActiveIndex(nearest);
+  }, []);
 
   useEffect(() => {
     updateScrollState();
@@ -39,11 +69,16 @@ export default function TestimonialsSection() {
     el.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
 
-    // keyboard support (left/right)
     const onKey = (e) => {
-      if (e.key === "ArrowLeft") return scrollByOffset(-1);
-      if (e.key === "ArrowRight") return scrollByOffset(1);
+      if (["ArrowLeft", "ArrowRight", "PageUp", "PageDown", "Home", "End"].includes(e.key)) {
+        // allow keyboard only when focus is inside the section or on document (friendly)
+        if (e.key === "ArrowLeft" || e.key === "PageUp") scrollByOffset(-1);
+        if (e.key === "ArrowRight" || e.key === "PageDown") scrollByOffset(1);
+        if (e.key === "Home") scrollToIndex(0);
+        if (e.key === "End") scrollToIndex(testimonials.length - 1);
+      }
     };
+
     window.addEventListener("keydown", onKey);
 
     return () => {
@@ -51,95 +86,102 @@ export default function TestimonialsSection() {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("keydown", onKey);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [updateScrollState]);
 
-  // scroll by pages (80% of visible width)
+  // scroll by "page" (80% of container width)
   const scrollByOffset = (direction = 1) => {
     const el = scrollerRef.current;
     if (!el) return;
     const offset = Math.round(el.clientWidth * 0.8) * direction;
     el.scrollTo({ left: el.scrollLeft + offset, behavior: "smooth" });
-    // update after a short delay (smooth scroll)
-    setTimeout(updateScrollState, 300);
+    // update after scroll finishes (best-effort)
+    setTimeout(updateScrollState, 400);
+  };
+
+  // center a card at index
+  const scrollToIndex = (index) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const card = el.children[index];
+    if (!card) return;
+    const left = Math.max(0, Math.round(card.offsetLeft - (el.clientWidth - card.clientWidth) / 2));
+    el.scrollTo({ left, behavior: "smooth" });
+    setTimeout(updateScrollState, 400);
   };
 
   return (
-    <section className="relative bg-gray-800 text-white py-20">
+    <section className="relative py-20 bg-slate-50 text-slate-900">
+      {/* decorative warm glow */}
+      <div className="absolute -top-12 -left-12 w-[260px] h-[260px] bg-amber-300/30 rounded-full blur-3xl pointer-events-none" />
       <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-3xl font-bold mb-8 text-center">What Our Customers Are Saying</h2>
+        <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 text-center mb-10">
+          What Our Customers Are Saying
+        </h2>
 
-        {/* Scroller container */}
         <div className="relative">
-          {/* Left arrow */}
+          {/* Left Arrow (visible on md+) */}
           <button
             onClick={() => scrollByOffset(-1)}
             disabled={!canScrollLeft}
-            aria-label="Scroll left"
-            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 rounded-full p-2 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300 transition-opacity
-              ${canScrollLeft ? "bg-white text-gray-800 hover:scale-105" : "bg-white/40 text-gray-400 cursor-not-allowed opacity-50"}
-              hidden md:inline-flex`}
+            aria-label="Scroll testimonials left"
+            className={`hidden md:inline-flex absolute -left-3 top-1/2 -translate-y-1/2 z-20 items-center justify-center w-10 h-10 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-teal-200 transition transform
+              ${canScrollLeft ? "bg-white text-slate-900 hover:scale-105" : "bg-white/40 text-slate-300 cursor-not-allowed opacity-60"}`}
           >
-            {/* left arrow svg */}
-            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M15 18l-6-6 6-6" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
 
-          {/* Horizontal scroller */}
+          {/* Scroller */}
           <div
             ref={scrollerRef}
-            className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth py-4 px-2 snap-x snap-mandatory"
-            // snap children to center-ish; card uses snap-center
+            className="flex gap-6 overflow-x-auto scroll-smooth py-4 px-2 snap-x snap-mandatory"
+            role="list"
+            aria-label="Customer testimonials"
           >
             {testimonials.map((t, i) => (
-              <article
+              <motion.article
                 key={i}
-                className="min-w-[280px] sm:min-w-[340px] md:min-w-[420px] snap-center bg-gray-900 p-6 rounded-lg shadow-lg flex-shrink-0"
-                aria-label={`testimonial-${i}`}
+                className="snap-center min-w-[280px] sm:min-w-[320px] md:min-w-[420px] bg-white rounded-2xl p-6 shadow-lg flex flex-col justify-between"
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.5, delay: i * 0.06 }}
+                role="listitem"
+                aria-label={`Testimonial from ${t.name}`}
               >
-                <p className="italic mb-4 leading-relaxed">“{t.text}”</p>
-                <div className="mt-auto">
-                  <h4 className="font-bold">{t.name}</h4>
-                  <span className="text-sm text-gray-400">{t.company}</span>
+                <p className="italic text-slate-700 mb-6 leading-relaxed">“{t.text}”</p>
+
+                <div className="mt-4">
+                  <div className="font-semibold text-slate-900">{t.name}</div>
+                  <div className="text-sm text-slate-500">{t.company}</div>
                 </div>
-              </article>
+              </motion.article>
             ))}
           </div>
 
-          {/* Right arrow */}
+          {/* Right Arrow (visible on md+) */}
           <button
             onClick={() => scrollByOffset(1)}
             disabled={!canScrollRight}
-            aria-label="Scroll right"
-            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 rounded-full p-2 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300 transition-opacity
-              ${canScrollRight ? "bg-white text-gray-800 hover:scale-105" : "bg-white/40 text-gray-400 cursor-not-allowed opacity-50"}
-              hidden md:inline-flex`}
+            aria-label="Scroll testimonials right"
+            className={`hidden md:inline-flex absolute -right-3 top-1/2 -translate-y-1/2 z-20 items-center justify-center w-10 h-10 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-teal-200 transition transform
+              ${canScrollRight ? "bg-white text-slate-900 hover:scale-105" : "bg-white/40 text-slate-300 cursor-not-allowed opacity-60"}`}
           >
-            {/* right arroww svg */}
-            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M9 6l6 6-6 6" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 6l6 6-6 6" />
             </svg>
           </button>
         </div>
 
-        {/* Small pager dots for desktop & mobile */}
-        <div className="mt-6 flex justify-center items-center gap-2">
+        {/* pager dots */}
+        <div className="mt-8 flex justify-center items-center gap-3">
           {testimonials.map((_, idx) => (
             <button
               key={idx}
-              onClick={() => {
-                const el = scrollerRef.current;
-                if (!el) return;
-                const card = el.children[idx];
-                if (!card) return;
-                // center the clicked card
-                const left = card.offsetLeft - (el.clientWidth - card.clientWidth) / 2;
-                el.scrollTo({ left, behavior: "smooth" });
-                setTimeout(updateScrollState, 300);
-              }}
-              className="w-2.5 h-2.5 rounded-full bg-white/60 hover:bg-white/90"
-              aria-label={`Go to testimonial ${idx + 1}`}
+              onClick={() => scrollToIndex(idx)}
+              aria-label={`Show testimonial ${idx + 1}`}
+              className={`w-3.5 h-3.5 rounded-full transition-all ${activeIndex === idx ? "bg-teal-600 scale-110" : "bg-slate-300"}`}
             />
           ))}
         </div>
